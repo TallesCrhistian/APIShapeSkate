@@ -10,27 +10,31 @@ namespace APIShapeSkate.Controllers
     [Route("[controller]")]
     public class ShapeController : ControllerBase
     {
-        private static List<Shape> shapes = new List<Shape>();
-        private static int id = 1;
+       private DataContext _context;
+
+        public ShapeController(DataContext context)
+        {
+            _context = context;
+        }
 
         [HttpPost]
         public IActionResult AdicionaFilme([FromBody] Shape shape)
         {
-            shape.Id = id++;
-            shapes.Add(shape);
+            _context.Shapes.Add(shape);
+            _context.SaveChanges();
             return CreatedAtAction(nameof(RecuperaFilmesPorId), new { Id = shape.Id }, shape);
         }
 
         [HttpGet]
-        public IActionResult RecuperaFilmes()
+        public IEnumerable<Shape> RecuperaFilmes()
         {
-            return Ok(shapes);
+            return _context.Shapes;
         }
 
         [HttpGet("{id}")]
         public IActionResult RecuperaFilmesPorId(int id)
         {
-            Shape shape = shapes.FirstOrDefault(shape => shape.Id == id);
+            Shape shape = _context.Shapes.FirstOrDefault(shape => shape.Id == id);
             if (shape != null)
             {
                 return Ok(shape);
