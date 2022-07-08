@@ -1,13 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace APIShapeSkate.Data
+namespace APIShapeSkate.Data.Dtos
 {
-    public class Shape
+    public class CreateShapeDto
     {
-        [Key]
-        [Required]
-        public int Id { get; set; }
-        [Required(ErrorMessage ="O campo é obrigatório")]
+        [Required(ErrorMessage = "O campo é obrigatório")]
         public string Madeira { get; set; }
         [Required(ErrorMessage = "O campo é obrigatório")]
         public int Tamanho { get; set; }
