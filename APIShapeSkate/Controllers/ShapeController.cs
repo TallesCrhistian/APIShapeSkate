@@ -41,6 +41,34 @@ namespace APIShapeSkate.Controllers
             }
             return NotFound();
         }
+
+        [HttpPut("{id}")]
+        public IActionResult AtualizaShape(int id, [FromBody] Shape shapeNovo)
+        {
+            Shape shape = _context.Shapes.FirstOrDefault(shape => shape.Id == id);
+            if(shape == null)
+            {
+                return NotFound();
+            }
+            shape.Madeira = shapeNovo.Madeira;
+            shape.Tamanho = shapeNovo.Tamanho;
+            shape.Valor = shapeNovo.Valor;
+            _context.SaveChanges();
+
+            return NoContent();
+        }
+        [HttpDelete ("{id}")]
+        public IActionResult DeletaShape(int id)
+        {
+            var shape = _context.Shapes.FirstOrDefault(shape => shape.Id == id);    
+            if(shape == null)
+            {
+                return NotFound();
+            }
+            _context.Remove(shape);
+            _context.SaveChanges();
+            return NoContent();
+        }
     }
 
 
