@@ -1,5 +1,6 @@
 ﻿using APIShapeSkate.Data;
 using APIShapeSkate.Data.Dtos;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -13,21 +14,19 @@ namespace APIShapeSkate.Controllers
     public class ShapeController : ControllerBase
     {
        private DataContext _context;
+        private IMapper _mapper;
 
-        public ShapeController(DataContext context)
+        public ShapeController(DataContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         [HttpPost]
-        public IActionResult AdicionaFilme([FromBody] CreateShapeDto shapedto)
+        public IActionResult AdicionaFilme([FromBody] CreateShapeDto shapeDto)
         {
-            Shape shape = new Shape
-            {
-                Madeira = shapedto.Madeira,
-                Tamanho = shapedto.Tamanho,
-                Valor = shapedto.Valor
-            };
+            Shape shape = _mapper.Map<Shape>(shapeDto);
+           
             _context.Shapes.Add(shape);
             _context.SaveChanges();
             return CreatedAtAction(nameof(RecuperaFilmesPorId), new { Id = shape.Id }, shape);
@@ -45,15 +44,9 @@ namespace APIShapeSkate.Controllers
             Shape shape = _context.Shapes.FirstOrDefault(shape => shape.Id == id);
             if (shape != null)
             {
-                ReadShapeDto shapeDto = new ReadShapeDto
-                {
-                    Id = shape.Id,
-                    Madeira = shape.Madeira,
-                    Tamanho = shape.Tamanho,
-                    Valor = shape.Valor,
-                    HoraDaConsulta = DateTime.Now
-                };
-                return Ok(shape);
+                ReadShapeDto shapeDto = _mapper.Map<ReadShapeDto>(shape);
+             
+                return Ok(shapeDto);
             }
             return NotFound();
         }
@@ -66,9 +59,7 @@ namespace APIShapeSkate.Controllers
             {
                 return NotFound();
             }
-            shape.Madeira = shapeDto.Madeira;
-            shape.Tamanho = shapeDto.Tamanho;
-            shape.Valor = shapeDto.Valor;
+            _mapper.Map(shapeDto, shape);
             _context.SaveChanges();
 
             return NoContent();
